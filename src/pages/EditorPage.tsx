@@ -58,18 +58,18 @@ console.log(currentUser);
         <Header />
         <div className="container mx-auto px-4 py-12 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
-          <span className="ml-3 text-gray-600 dark:text-gray-400">Loading...</span>
+          <span className="ml-3 text-gray-600 dark:text-gray-400">Загрузка...</span>
         </div>
       </div>
     );
   }
 
   const handleCreateTournament = async () => {
-    if (!currentUser) {
+   /* if (!currentUser) {
       alert('You must be logged in to create a tournament');
       navigate('/');
       return;
-    }
+    } */
 
     if (!tournamentName.trim()) {
       alert('Please enter a tournament name');
@@ -77,8 +77,11 @@ console.log(currentUser);
     }
 
     try {
-      const tournamentId = await createTournament(tournamentName, currentUser.uid);
+      const tournamentId = await createTournament(tournamentName, currentUser?.uid  || 'anonymous' );
+      console.log("🔥 Запускаем createBracket с", numTeams);
       await createBracket(tournamentId, numTeams);
+      
+
       
       const unsubscribe = subscribeTournament(tournamentId, (updatedTournament) => {
         setTournament(updatedTournament);
@@ -105,10 +108,9 @@ console.log(currentUser);
         const nextMatch = tournament.matches.find(m => m.id === match.nextMatchId);
         
         if (nextMatch) {
-          const isFirstTeam = nextMatch.team1 === null || 
-            tournament.matches.find(m => m.nextMatchId === nextMatch.id && m.position % 2 !== 0)?.id === matchId;
-          
-          if (isFirstTeam) {
+          // Determine if this match is left or right child by position
+          // Odd position -> team1, Even position -> team2
+          if (match.position % 2 === 1) {
             await updateMatch(tournament.id, nextMatch.id, { team1: data.winner });
           } else {
             await updateMatch(tournament.id, nextMatch.id, { team2: data.winner });
@@ -121,6 +123,7 @@ console.log(currentUser);
   };
   
   const handleStartTournament = async () => {
+     console.log("🔥 Нажали Create Tournament");
     if (!tournament) return;
     
     try {
@@ -166,16 +169,16 @@ console.log(currentUser);
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Tournament Editor
+            Редактор турнира
           </h1>
           
           {!tournament && (
             <button
-              onClick={() => setShowBracketSetup(true)}
+              onClick={() => { console.log("📌 Нажали Новый турнир"); setShowBracketSetup(true)}}
               className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
             >
               <PlusCircle className="h-5 w-5 mr-2" />
-              New Tournament
+              Новый турнир
             </button>
           )}
         </div>
@@ -190,7 +193,7 @@ console.log(currentUser);
                     {tournament.name}
                   </h2>
                   <p className="text-sm text-gray-500">
-                    Created: {new Date(tournament.createdAt).toLocaleDateString()}
+                    Создано: {new Date(tournament.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 
@@ -201,7 +204,7 @@ console.log(currentUser);
                       className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md transition-colors"
                     >
                       <Play className="h-5 w-5 mr-2" />
-                      Start Tournament
+                      Начать турнир
                     </button>
                   )}
                   
@@ -248,8 +251,8 @@ console.log(currentUser);
           <div className="flex items-center justify-center h-64 bg-white dark:bg-gray-800 rounded-lg shadow">
             <p className="text-gray-500">
               {showBracketSetup 
-                ? 'Creating a new tournament...' 
-                : 'No tournament selected. Create a new tournament to get started.'}
+                ? 'Создание нового турнира...' 
+                : 'Турнир не выбран. Создайте новый турнир, чтобы начать.'}
             </p>
           </div>
         )}
@@ -258,7 +261,7 @@ console.log(currentUser);
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
               <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-                Create New Tournament
+                Создать новый турнир
               </h2>
               
               <div className="mb-4">
@@ -266,7 +269,7 @@ console.log(currentUser);
                   htmlFor="tournament-name" 
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                 >
-                  Tournament Name
+                  Название турнира
                 </label>
                 <input
                   id="tournament-name"
@@ -274,7 +277,7 @@ console.log(currentUser);
                   value={tournamentName}
                   onChange={(e) => setTournamentName(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="e.g., Summer Championship 2025"
+                  placeholder="например, Летний чемпионат 2025"
                 />
               </div>
               
@@ -283,7 +286,7 @@ console.log(currentUser);
                   htmlFor="num-teams" 
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                 >
-                  Number of Teams
+                  Количество команд
                 </label>
                 <select
                   id="num-teams"
@@ -291,10 +294,10 @@ console.log(currentUser);
                   onChange={(e) => setNumTeams(Number(e.target.value))}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 >
-                  <option value={4}>4 Teams</option>
-                  <option value={8}>8 Teams</option>
-                  <option value={16}>16 Teams</option>
-                  <option value={32}>32 Teams</option>
+                  <option value={4}>4 команды</option>
+                  <option value={8}>8 команд</option>
+                  <option value={16}>16 команд</option>
+                  <option value={32}>32 команды</option>
                 </select>
               </div>
               
@@ -303,13 +306,13 @@ console.log(currentUser);
                   onClick={() => setShowBracketSetup(false)}
                   className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
                 >
-                  Cancel
+                  Отменить
                 </button>
                 <button
                   onClick={handleCreateTournament}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none"
                 >
-                  Create
+                  Создать
                 </button>
               </div>
             </div>

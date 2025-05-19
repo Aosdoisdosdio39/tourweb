@@ -86,58 +86,64 @@ export const createBracket = async (
 ): Promise<void> => {
   const tournamentRef = doc(db, 'tournaments', tournamentId);
   const tournamentSnap = await getDoc(tournamentRef);
+
+  console.log("🧠 createBracket стартанул");
   
   if (!tournamentSnap.exists()) {
     throw new Error('Tournament not found');
   }
-  
-  // Calculate the number of rounds needed
+
   const numRounds = Math.ceil(Math.log2(numTeams));
   const totalMatches = Math.pow(2, numRounds) - 1;
-  
-  // Generate all matches
+
   const matches: Match[] = [];
-  
-  // Final match (championship)
-  const finalMatchId = uuidv4();
-  matches.push({
-    id: finalMatchId,
-    round: numRounds,
-    position: 1,
-    team1: null,
-    team2: null,
-    winner: null,
-    nextMatchId: null,
-    comments: ''
-  });
-  
-  // Generate all other rounds and matches
-  for (let round = numRounds - 1; round >= 1; round--) {
-    const matchesInRound = Math.pow(2, round - 1);
-    
+
+  // Шаг 1: создать все матчи (totalMatches)
+  for (let i = 0; i < totalMatches; i++) {
+    matches.push({
+      id: uuidv4(),
+      round: 0, // потом установим
+      position: 0, // потом установим
+      team1: null,
+      team2: null,
+      winner: null,
+      nextMatchId: null,
+      comments: ''
+    });
+  }
+
+  // Шаг 2: установить раунды и позиции
+  let matchIndex = 0;
+  for (let round = 1; round <= numRounds; round++) {
+    // matchesInRound: number of matches in this round
+    const matchesInRound = Math.pow(2, numRounds - round);
     for (let position = 1; position <= matchesInRound; position++) {
-      const matchId = uuidv4();
-      
-      // Determine the next match this feeds into
-      const nextMatchPosition = Math.ceil(position / 2);
-      const nextRound = round + 1;
-      
-      // Find the ID of the next match
-      const nextMatch = matches.find(m => m.round === nextRound && m.position === nextMatchPosition);
-      const nextMatchId = nextMatch ? nextMatch.id : null;
-      
-      matches.push({
-        id: matchId,
-        round,
-        position,
-        team1: null,
-        team2: null,
-        winner: null,
-        nextMatchId,
-        comments: ''
-      });
+      matches[matchIndex].round = round;
+      matches[matchIndex].position = position;
+      matchIndex++;
     }
   }
-  
+
+  // Шаг 3: установить связи (nextMatchId)
+  for (const match of matches) {
+    if (match.round < numRounds) {
+      const nextRound = match.round + 1;
+      const nextPosition = Math.ceil(match.position / 2);
+      const nextMatch = matches.find(m =>
+        m.round === nextRound && m.position === nextPosition
+      );
+      if (nextMatch) {
+        match.nextMatchId = nextMatch.id;
+      }
+    }
+  }
+
+  // Log round 1 matches for debugging
+  const round1Matches = matches.filter(m => m.round === 1);
+  console.log(`Round 1 matches (should be ${numTeams / 2}):`, round1Matches);
+
+  console.log("Создано матчей:", matches.length); // должен быть 3 при 4 командах
+
   await updateDoc(tournamentRef, { matches });
 };
+

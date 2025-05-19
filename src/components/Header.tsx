@@ -22,7 +22,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link to="/" className="flex items-center space-x-2 text-white">
           <Trophy className="h-8 w-8 text-amber-400" />
-          <span className="text-2xl font-bold tracking-tight">Tournament Bracket</span>
+          <span className="text-2xl font-bold tracking-tight">Турнирная Сетка</span>
         </Link>
         
         {currentUser && (

@@ -77,13 +77,13 @@ const BracketMatch: React.FC<BracketMatchProps> = ({
                   onClick={() => setIsCommenting(false)}
                   className="px-2 py-1 text-xs rounded-md text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
-                  Cancel
+                  Отменить
                 </button>
                 <button 
                   onClick={handleSaveComment}
                   className="px-2 py-1 text-xs rounded-md bg-blue-600 text-white hover:bg-blue-700"
                 >
-                  Save
+                  Сохранить
                 </button>
               </div>
             </div>

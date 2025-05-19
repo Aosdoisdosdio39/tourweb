@@ -56,7 +56,7 @@ const ViewerPage: React.FC = () => {
         <Header />
         <div className="container mx-auto px-4 py-12 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
-          <span className="ml-3 text-gray-600 dark:text-gray-400">Loading tournament...</span>
+          <span className="ml-3 text-gray-600 dark:text-gray-400">Загрузка турнира...</span>
         </div>
       </div>
     );
@@ -73,7 +73,7 @@ const ViewerPage: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Error</h2>
+            <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Ошибка</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
             <button
               onClick={() => navigate('/')}
@@ -98,7 +98,7 @@ const ViewerPage: React.FC = () => {
             className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft className="h-5 w-5 mr-1" />
-            Back to Home
+            Вернуться на главную
           </button>
         </div>
         
@@ -112,17 +112,17 @@ const ViewerPage: React.FC = () => {
                   </h1>
                   <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                     <Eye className="h-4 w-4 mr-1" />
-                    <span>Viewer Mode</span>
+                    <span>Режим наблюдения</span>
                   </div>
                 </div>
                 
                 {tournament.isActive ? (
                   <div className="mt-4 md:mt-0 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 text-sm font-medium rounded-full">
-                    Tournament in Progress
+                    Турнир в процессе
                   </div>
                 ) : (
                   <div className="mt-4 md:mt-0 px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 text-sm font-medium rounded-full">
-                    Awaiting Start
+                    Ожидание начала турнира
                   </div>
                 )}
               </div>

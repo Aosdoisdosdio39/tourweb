@@ -29,10 +29,10 @@ const HomePage: React.FC = () => {
               <Trophy className="h-12 w-12 text-amber-500" />
             </div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Tournament Bracket
+              Турнирная сетка
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300">
-              Create, share, and follow tournament brackets in real-time
+              Создавайте, делитесь и следите за турнирными сетками в режиме реального времени
             </p>
           </div>
           
@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
                   htmlFor="room-id" 
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
-                  Room:
+                  Турнир:
                 </label>
                 <div className="flex">
                   <input
@@ -51,7 +51,7 @@ const HomePage: React.FC = () => {
                     type="text"
                     value={roomId}
                     onChange={(e) => setRoomId(e.target.value)}
-                    placeholder="Enter tournament ID"
+                    placeholder="Введите идентификатор турнира"
                     className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   />
                   <button
@@ -68,14 +68,14 @@ const HomePage: React.FC = () => {
                   onClick={handleEditorMode}
                   className="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-medium rounded-md transition-colors shadow-md"
                 >
-                  Editor Mode
+                  Режим редактора
                 </button>
               </div>
             </div>
             
             <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700/30 border-t border-gray-200 dark:border-gray-700">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Create your own tournament bracket in Editor Mode or join an existing tournament by entering the room ID.
+                Создайте собственную турнирную сетку в режиме редактора или присоединитесь к существующему турниру, введя идентификатор комнаты.
               </p>
             </div>
           </div>

@@ -7,13 +7,15 @@ interface BracketRoundProps {
   roundNumber: number;
   isEditor: boolean;
   onUpdateMatch?: (matchId: string, data: Partial<Match>) => void;
+  matchRefs?: React.MutableRefObject<{ [key: string]: HTMLDivElement | null }>;
 }
 
 const BracketRound: React.FC<BracketRoundProps> = ({ 
   matches, 
   roundNumber,
   isEditor,
-  onUpdateMatch
+  onUpdateMatch,
+  matchRefs
 }) => {
   // Calculate the height of spacers between matches for this round
   const getSpacerHeight = (roundNum: number) => {
@@ -31,11 +33,17 @@ const BracketRound: React.FC<BracketRoundProps> = ({
       {roundMatches.map((match, index) => (
         <React.Fragment key={match.id}>
           {index > 0 && <div style={{ height: `${spacerHeight}px` }} />}
-          <BracketMatch 
-            match={match} 
-            isEditor={isEditor}
-            onUpdateMatch={onUpdateMatch}
-          />
+          <div
+            ref={el => {
+              if (matchRefs) matchRefs.current[match.id] = el;
+            }}
+          >
+            <BracketMatch 
+              match={match} 
+              isEditor={isEditor}
+              onUpdateMatch={onUpdateMatch}
+            />
+          </div>
         </React.Fragment>
       ))}
     </div>
